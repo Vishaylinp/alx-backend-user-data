@@ -59,10 +59,12 @@ def main():
     logger = get_logger()
 
     for row in db_cursor:
-        format_data = ''.join(f'{f}={str(r)}; ' for r, f in zip(row, fields_nm))
-        logger.info(format_data.strip())
+        form_data = ''.join(f'{f}={str(r)}; ' for r, f in zip(row, fields_nm))
+        logger.info(form_data.strip())
+
     db_cursor.close()
     db.close()
+
 
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
