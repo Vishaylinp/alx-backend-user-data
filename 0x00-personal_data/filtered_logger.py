@@ -29,7 +29,7 @@ def get_logger() -> logging.Logger:
 
     handler = logging.StreamHandler()
     handler.setFormatter(RedactingFormatter(list(PII_FIELDS)))
-    logger.addHandler("handler")
+    logger.addHandler(handler)
 
     return logger
 
@@ -48,6 +48,21 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
                                                          database=db_name)
     return connect
 
+
+def main():
+    """obtain database connection"""
+    db = get_db()
+    db_cursor = db.cursor()
+    db_cursor.execute("SELECT * FROM users;")
+    fields_nm = [c[0] for c in db_cursor.description]
+
+    logger = get_logger()
+
+    for row in db_cursor:
+        format_data = ''.join(f'{f}={str(r)}; ' for r, f in zip(row, fields_nm))
+        logger.info(format_data.strip())
+    db_cursor.close()
+    db.close()
 
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
@@ -68,3 +83,7 @@ class RedactingFormatter(logging.Formatter):
         record.msg = filter_datum(self.fields, self.REDACTION,
                                   record.getMessage(), self.SEPARATOR)
         return super(RedactingFormatter, self).format(record)
+
+
+if __name__ == "__main__":
+    main()
