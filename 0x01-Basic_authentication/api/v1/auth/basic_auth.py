@@ -4,6 +4,7 @@
 from api.v1.auth.auth import Auth
 import base64
 from typing import TypeVar
+from models.user import User
 
 
 class BasicAuth(Auth):
@@ -78,3 +79,26 @@ class BasicAuth(Auth):
             if user.is_valid_password(user_pwd):
                 return user
         return None
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """current user"""
+
+        header_auth = self.authorization_header(request)
+        if not header_auth:
+            return None
+
+        encoding = self.extract_base64_authorization_header(header_auth)
+        if not encoding:
+            return None
+
+        decoding = self.decode_base64_authorization_header(encoding)
+        if not decoding:
+            return None
+
+        email, user_password = self.extract_user_credentials(decoding)
+        if not email or not user_password:
+            return None
+
+        user = self.user_object_from_credentials(email, user_password)
+        if not user:
+            return None
