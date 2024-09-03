@@ -8,9 +8,11 @@ from flask import Flask, jsonify, abort, request
 from flask_cors import (CORS, cross_origin)
 import os
 from api.v1.auth.auth import Auth
+from api.v1.auth.basic_auth import BasicAuth
 
 
 app = Flask(__name__)
+app.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 auth = None
@@ -20,10 +22,14 @@ AUTH_TYPE = os.getenv("AUTH_TYPE")
 if AUTH_TYPE == "auth":
     auth = Auth()
 
+elif AUTH_TYPE == "basic_auth":
+    auth = BasicAuth()
+
 
 @app.before_request
 def before_request():
-    """before request"""
+    """before request
+    """
     if auth is None:
         pass
     else:
