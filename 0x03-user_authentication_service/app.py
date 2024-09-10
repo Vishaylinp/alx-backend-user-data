@@ -1,32 +1,33 @@
 #!/usr/bin/env python3
-"""app using flask"""
+"""app using flask
+"""
 from flask import Flask, jsonify, request
 from auth import Auth
 
-
+app = Flask(__name__)
 AUTH = Auth()
 
-app = Flask(__name__)
 
-
-@app.route('/', methods=['GET'], strict_slashes=False)
+@app.route("/", methods=["GET"], strict_slashes=False)
 def start() -> str:
-    """return jsonify"""
+    """return jsonify
+    """
     return jsonify({"message": "Bienvenue"})
 
 
-@app.route('/users', methods=['POST'])
+@app.route("/users", methods=["POST"], strict_slashes=False)
 def users() -> str:
-    """user method"""
+    """user method
+    """
 
-    email = request.form.get('email')
-    password = request.form.get('password')
+    email = request.form.get("email")
+    password = request.form.get("password")
 
     try:
-        usr = AUTH.register_user(email, password)
-        return jsonify({"email": usr.email, "message": "user created"})
+        AUTH.register_user(email, password)
+        return jsonify({"email": email, "message": "user created"})
 
-    except Exception:
+    except ValueError:
         return jsonify({"message": "email already registered"}), 400
 
 
