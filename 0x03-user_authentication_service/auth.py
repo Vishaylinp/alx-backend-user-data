@@ -15,11 +15,11 @@ def _hash_password(password: str) -> str:
     return hash_password
 
 
-def __generate_uuid():
+def _generate_uuid() -> str:
     """generate unique id"""
 
     u_id = uuid4()
-    return u_id
+    return str(u_id)
 
 
 class Auth:
@@ -53,3 +53,17 @@ class Auth:
         else:
             return bcrypt.checkpw(password.encode('utf-8'),
                                   usr.hashed_password)
+
+    def create_session(self, email: str) -> str:
+        """Create session
+        """
+
+        try:
+            usr = self._db.find_user_by(email=email)
+
+        except NoResultFound:
+            return None
+
+        sess_id = _generate
+        self._db.update_user(user.id, sess_id=sess_id)
+        return sess_id
