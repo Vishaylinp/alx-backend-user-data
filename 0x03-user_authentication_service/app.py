@@ -4,11 +4,12 @@
 from flask import Flask, jsonify, request, abort
 from auth import Auth
 
-app = Flask(__name__)
+
 AUTH = Auth()
+app = Flask(__name__)
 
 
-@app.route("/", methods=["GET"], strict_slashes=False)
+@app.route("/", strict_slashes=False)
 def start() -> str:
     """return jsonify
     """
@@ -31,20 +32,22 @@ def users() -> str:
         return jsonify({"message": "email already registered"}), 400
 
 
-@app.route("/session", methods=["POST"], strict_slashes=False)
-def login () -> str:
-    """login in"""
+@app.route("/session", methods=['POST'], strict_slashes=False)
+def login() -> str:
+    """login in
+    """
 
     email = request.form.get("email")
     password = request.form.get("password")
 
-    if not AUTH.valid_login(email, password):
+    if AUTH.valid_login(email, password):
+        session_id = AUTH.create_session(email)
+        res = jsonify({"email": email, "message": "logged in"})
+        res.set_cookie("session_id", sess_id)
+        return res
+    else:
         abort(401)
 
-    sess_id = AUTH.create_session(email)
-    res = jsonify({"email": email, "message": "logged in"})
-    res.set_cookie("session_id", sess_id)
-    return res
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
