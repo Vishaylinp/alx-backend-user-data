@@ -41,7 +41,7 @@ class DB:
 
     except Exception:
         self._session.rollback()
-        n_user = None
+        return None
     return n_user
 
     def find_user_by(self, **kwargs) -> User:
