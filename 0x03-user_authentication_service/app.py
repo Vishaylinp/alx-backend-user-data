@@ -95,7 +95,7 @@ def get_reset() -> str:
 
     if reset_t is None:
         abort(403)
-    return jsonify({"email": email, "reset_token": reset_t}), 200 
+    return jsonify({"email": email, "reset_token": reset_t}), 200
 
 
 if __name__ == "__main__":
