@@ -34,12 +34,11 @@ class Auth:
 
         try:
             self._db.find_user_by(email=email)
+            raise ValueError("User {} already exists".format(email))
 
         except NoResultFound:
             user = self._db.add_user(email, _hash_password(password))
-            return user
-        else:
-            raise ValueError("User {} already exists".format(email))
+            return user          
 
     def valid_login(self, email: str, password: str) -> bool:
         """validate login"""
@@ -92,4 +91,3 @@ class Auth:
 
     def get_reset_password_token(self, email: str) -> str:
         """reset token"""
-
